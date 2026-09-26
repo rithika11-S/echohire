@@ -1,0 +1,303 @@
+{
+  "users": [
+    {
+      "id": "user-seeker-1",
+      "email": "seeker@echohire.com",
+      "password": "password",
+      "name": "Rahul Sharma",
+      "role": "seeker",
+      "phone": "+91 98765 43210",
+      "location": "Chennai, Tamil Nadu",
+      "summary": "Passionate Frontend Developer dedicated to creating accessible web applications for everyone.",
+      "education": "B.Tech in Computer Science, Anna University (2020 - 2024)",
+      "experience": "Junior Web Developer at TechAccess (1 year)",
+      "skills": [
+        "HTML",
+        "CSS",
+        "React",
+        "JavaScript",
+        "ARIA",
+        "Accessibility"
+      ],
+      "accessNeed": "screen reader",
+      "resumeName": "Rahul_Sharma_Resume.pdf"
+    },
+    {
+      "id": "recruiter-technova-1",
+      "email": "recruiterA@technova.com",
+      "password": "password",
+      "name": "Recruiter A",
+      "role": "employer",
+      "company": "TechNova Solutions",
+      "companyId": "company-technova",
+      "location": "Chennai, Tamil Nadu",
+      "phone": "+91 98765 11111",
+      "description": "Enterprise cloud and AI software company committed to accessible workspace technologies."
+    },
+    {
+      "id": "recruiter-brightpath-1",
+      "email": "recruiterB@brightpath.com",
+      "password": "password",
+      "name": "Recruiter B",
+      "role": "employer",
+      "company": "BrightPath Solutions",
+      "companyId": "company-brightpath",
+      "location": "Bangalore, Karnataka",
+      "phone": "+91 98765 22222",
+      "description": "Inclusive digital agency providing web engineering and accessibility consulting."
+    },
+    {
+      "id": "user-employer-1",
+      "email": "employer@techcorp.com",
+      "password": "password",
+      "name": "TechCorp Solutions",
+      "role": "employer",
+      "company": "TechCorp Solutions",
+      "companyId": "company-techcorp",
+      "location": "Bangalore, Karnataka",
+      "phone": "+91 98123 45678",
+      "description": "Leading technology enterprise committed to inclusive hiring and accessible workspace environments."
+    },
+    {
+      "id": "user-admin-1",
+      "email": "admin@echohire.com",
+      "password": "password",
+      "name": "Platform Administrator",
+      "role": "admin"
+    },
+    {
+      "id": "user-1788934001413",
+      "email": "rithika@gmail.com",
+      "password": "12345",
+      "name": "Rithika",
+      "role": "seeker",
+      "company": "",
+      "phone": "7904652970",
+      "location": "Chennai",
+      "summary": "",
+      "skills": [],
+      "accessNeed": "screen reader",
+      "resumeName": "Standard_Resume.pdf"
+    },
+    {
+      "id": "user-1788942554443",
+      "email": "abcd@gmail.com",
+      "password": "12345",
+      "name": "Rithika",
+      "role": "seeker",
+      "company": "",
+      "phone": "9025644770",
+      "location": "Coimbatore Tamil Nadu",
+      "summary": "",
+      "skills": [],
+      "accessNeed": "screen reader",
+      "resumeName": "Standard_Resume.pdf"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "job-1788933520255",
+      "title": "developer ",
+      "company": "abc solution",
+      "companyId": "abc solution",
+      "recruiterId": "user-1788932885704",
+      "location": "Chennai, India",
+      "workMode": "Remote",
+      "jobType": "Full-Time",
+      "salary": "6-10 LPA",
+      "description": "We are looking for a skilled and motivated Software Developer to join our growing team. The candidate will be responsible for designing, developing, testing, and maintaining high-quality software applications. You will work closely with team members to build reliable, user-friendly, and accessible digital solutions.\n\nResponsibilities: Develop and maintain web applications, write clean and efficient code, troubleshoot technical issues, collaborate with designers and developers, and participate in testing and deployment.\n\nRequired Skills: Knowledge of HTML, CSS, JavaScript, React, Python or other programming languages, problem-solving skills, and effective communication.\n\nWe are committed to providing an inclusive workplace and encourage candidates of all abilities to apply.",
+      "requirements": "Strong core technical skills and passion for accessible engineering.",
+      "responsibilities": "Develop accessible web user interfaces and collaborate with teams.",
+      "skills": [
+        "accessibility",
+        "testing"
+      ],
+      "experience": "2+ years of relevant experience",
+      "postedDate": "9/9/2026",
+      "accessibilityInformation": "Fully screen-reader compatible codebase.",
+      "matchScore": 85
+    },
+    {
+      "id": "job-0",
+      "title": "AI Engineer",
+      "company": "TechNova Solutions",
+      "companyId": "company-technova",
+      "recruiterId": "recruiter-technova-1",
+      "location": "Chennai, Tamil Nadu",
+      "workMode": "Remote",
+      "jobType": "Full-Time",
+      "salary": "₹16,000,000 - ₹20,000,000 / year",
+      "description": "Develop speech recognition models and natural language processing interfaces for assistively-enabled software platforms.",
+      "requirements": "Proficiency in Python, Web Speech API, natural language processing, intent classification algorithms, and modern JavaScript.",
+      "responsibilities": "Train speech recognition models, build voice assistant command parsers, optimize speech synthesis, and write clean API code.",
+      "skills": [
+        "Python",
+        "Machine Learning",
+        "Voice Recognition",
+        "Speech Synthesis",
+        "JavaScript"
+      ],
+      "experience": "3+ years of AI/Speech development experience",
+      "postedDate": "2026-08-28",
+      "accessibilityInformation": "Fully screen-reader compatible codebase, flexible working hours, voice dictation tooling provided, remote work support.",
+      "matchScore": 95
+    },
+    {
+      "id": "job-1",
+      "title": "Frontend Developer",
+      "company": "BrightPath Solutions",
+      "companyId": "company-brightpath",
+      "recruiterId": "recruiter-brightpath-1",
+      "location": "Bangalore, Karnataka",
+      "workMode": "Remote",
+      "jobType": "Full-Time",
+      "salary": "₹12,000,000 - ₹15,000,000 / year",
+      "description": "Join BrightPath Solutions to engineer accessible React web interfaces and WCAG 2.1 AA compliant design systems.",
+      "requirements": "Strong foundation in React, JavaScript, HTML5, CSS3, ARIA live regions, keyboard navigation patterns, and automated accessibility tools.",
+      "responsibilities": "Design semantic React components, audit UI accessibility, ensure voice input capability, and collaborate with UX researchers.",
+      "skills": [
+        "HTML",
+        "CSS",
+        "React",
+        "JavaScript",
+        "ARIA",
+        "Accessibility"
+      ],
+      "experience": "2+ years of frontend development experience",
+      "postedDate": "2026-08-29",
+      "accessibilityInformation": "Inclusive workplace, screen-reader equipped laptop workstations, ergonomic remote setups.",
+      "matchScore": 92
+    },
+    {
+      "id": "job-2",
+      "title": "Accessibility Test Specialist",
+      "company": "TechNova Solutions",
+      "companyId": "company-technova",
+      "recruiterId": "recruiter-technova-1",
+      "location": "Chennai, Tamil Nadu",
+      "workMode": "Hybrid",
+      "jobType": "Full-Time",
+      "salary": "₹10,000,000 - ₹14,000,000 / year",
+      "description": "TechNova Solutions is seeking an Accessibility Test Specialist passionate about screen reader testing (NVDA/JAWS), keyboard navigation, and ARIA auditing.",
+      "requirements": "Experience testing with NVDA, VoiceOver, JAWS, automated axe-core audits, and WCAG 2.1 AA guidelines.",
+      "responsibilities": "Perform screen reader testing, file accessibility bug reports, and consult development teams.",
+      "skills": [
+        "Accessibility",
+        "NVDA",
+        "JAWS",
+        "Testing",
+        "WCAG"
+      ],
+      "experience": "2+ years of QA / Accessibility auditing experience",
+      "postedDate": "2026-08-30",
+      "accessibilityInformation": "Braille display hardware provided, screen reader software licenses covered.",
+      "matchScore": 88
+    },
+    {
+      "id": "job-3",
+      "title": "Full Stack Cloud Engineer",
+      "company": "BrightPath Solutions",
+      "companyId": "company-brightpath",
+      "recruiterId": "recruiter-brightpath-1",
+      "location": "Hyderabad, Telangana",
+      "workMode": "Remote",
+      "jobType": "Full-Time",
+      "salary": "₹14,000,000 - ₹18,000,000 / year",
+      "description": "Engineers microservices and REST APIs supporting accessible SaaS platforms at BrightPath Solutions.",
+      "requirements": "Node.js, Express, React, REST API architecture, and database performance tuning.",
+      "responsibilities": "Develop REST endpoints, maintain backend microservices, and ensure secure data handling.",
+      "skills": [
+        "Node.js",
+        "Express",
+        "React",
+        "REST API"
+      ],
+      "experience": "3+ years of full stack engineering experience",
+      "postedDate": "2026-08-31",
+      "accessibilityInformation": "Remote-first culture, flexible working hours.",
+      "matchScore": 84
+    }
+  ],
+  "applications": [
+    {
+      "id": "app-1788957818593",
+      "jobId": "job-1788933520255",
+      "jobTitle": "developer ",
+      "company": "abc solution",
+      "companyId": "abc solution",
+      "recruiterId": "user-1788932885704",
+      "seekerId": "user-1788942554443",
+      "seekerName": "Rithika",
+      "seekerEmail": "abcd@gmail.com",
+      "seekerSkills": [],
+      "appliedDate": "9/9/2026",
+      "status": "Applied",
+      "resumeName": "Standard_Resume.pdf",
+      "coverNote": ""
+    },
+    {
+      "id": "app-1788934426025",
+      "jobId": "job-1788933520255",
+      "jobTitle": "developer ",
+      "company": "abc solution",
+      "companyId": "abc solution",
+      "recruiterId": "user-1788932885704",
+      "seekerId": "user-1788934001413",
+      "seekerName": "Rithika",
+      "seekerEmail": "rithika@gmail.com",
+      "seekerSkills": [],
+      "appliedDate": "9/9/2026",
+      "status": "Applied",
+      "resumeName": "Standard_Resume.pdf",
+      "coverNote": "I am excited to apply for this position and believe my skills and experience make me a strong candidate. I am comfortable using assistive technologies and value inclusive, accessible work environments. I would appreciate accommodations such as screen-reader compatibility, accessible digital tools, and clear communication throughout the recruitment process. I am eager to contribute my skills, learn from the team, and grow professionally in this role. Thank you for considering my application."
+    },
+    {
+      "id": "app-demo-1",
+      "jobId": "job-0",
+      "jobTitle": "AI Engineer",
+      "company": "TechNova Solutions",
+      "companyId": "company-technova",
+      "recruiterId": "recruiter-technova-1",
+      "seekerId": "user-seeker-1",
+      "seekerName": "Rahul Sharma",
+      "seekerEmail": "seeker@echohire.com",
+      "seekerSkills": [
+        "Python",
+        "Machine Learning"
+      ],
+      "appliedDate": "2026-08-25",
+      "status": "Shortlisted",
+      "resumeName": "Rahul_Sharma_Resume.pdf",
+      "coverNote": "Interested in AI and voice interface engineering at TechNova Solutions."
+    },
+    {
+      "id": "app-demo-2",
+      "jobId": "job-1",
+      "jobTitle": "Frontend Developer",
+      "company": "BrightPath Solutions",
+      "companyId": "company-brightpath",
+      "recruiterId": "recruiter-brightpath-1",
+      "seekerId": "user-seeker-1",
+      "seekerName": "Rahul Sharma",
+      "seekerEmail": "seeker@echohire.com",
+      "seekerSkills": [
+        "HTML",
+        "CSS",
+        "React"
+      ],
+      "appliedDate": "2026-08-27",
+      "status": "Under Review",
+      "resumeName": "Rahul_Sharma_Resume.pdf",
+      "coverNote": "Experienced in React and accessible UI design at BrightPath Solutions."
+    }
+  ],
+  "savedJobs": {
+    "user-seeker-1": [
+      "job-0",
+      "job-1"
+    ],
+    "user-1788942554443": [
+      "job-1788933520255"
+    ]
+  }
+}

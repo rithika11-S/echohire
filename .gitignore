@@ -1,3 +1,20 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production builds
+dist/
+dist-ssr/
+*/dist/
+
+# Environment files and secrets
+.env
+.env.*
+*.env
+*.env.*
+!.env.example
+!*/.env.example
+
 # Logs
 logs
 *.log
@@ -6,11 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
 
 # Editor directories and files
 .vscode/*
