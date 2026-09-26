@@ -210,9 +210,11 @@ class VoiceEditingManager {
     } else if (target.id === "terms") {
       prompt = `Terms and Privacy Policy checkbox focused. Say yes or check to agree to the terms.`;
     } else if (target.id === "submit") {
-      // Context-aware: Sign In page vs Create Account page
+      // Context-aware: Sign In page vs Create Account page vs Profile page
       if (target.elementId === "login-submit-btn") {
         prompt = `Sign In button focused. Say yes or sign in to log into your account now.`;
+      } else if (target.elementId === "prof-save-btn" || target.label?.toLowerCase().includes("save")) {
+        prompt = `Save Profile button focused. Say yes or save to update and save your profile settings now.`;
       } else {
         prompt = `Create Account button focused. Say yes or submit to create your account now.`;
       }
@@ -348,6 +350,42 @@ class VoiceEditingManager {
       return { success: true, prompt, state: this.state, temporaryValue: formattedName };
     }
 
+    if (this.activeFieldId === "summary") {
+      let norm = rawInput.trim();
+      norm = norm.replace(/^(my summary is|my bio is|career summary is|bio is|it is|this is)\s+/gi, "");
+
+      if (!norm || isAffirmativeResponse(norm)) {
+        return this.commitUpdate();
+      }
+
+      this.temporaryValue = norm;
+      this.state = EDIT_STATES.CONFIRMING_VALUE;
+      this.awaitingConfirmation = true;
+
+      if (this.targetField) this.targetField.setValue(norm);
+
+      const prompt = `Professional summary updated. Is this correct? Say yes or next to continue.`;
+      return { success: true, prompt, state: this.state, temporaryValue: norm };
+    }
+
+    if (this.activeFieldId === "accommodation") {
+      let norm = rawInput.trim();
+      norm = norm.replace(/^(my accommodation is|my accessibility need is|accommodations are|needs are|it is|this is)\s+/gi, "");
+
+      if (!norm || isAffirmativeResponse(norm)) {
+        return this.commitUpdate();
+      }
+
+      this.temporaryValue = norm;
+      this.state = EDIT_STATES.CONFIRMING_VALUE;
+      this.awaitingConfirmation = true;
+
+      if (this.targetField) this.targetField.setValue(norm);
+
+      const prompt = `Workplace accommodation preferences set to "${norm}". Is this correct? Say yes or next to continue.`;
+      return { success: true, prompt, state: this.state, temporaryValue: norm };
+    }
+
     if (this.activeFieldId === "password" || this.activeFieldId === "confirmPassword" || (this.targetField && this.targetField.isSecret)) {
       this.temporaryValue = rawInput.trim();
       if (this.targetField) this.targetField.setValue(this.temporaryValue);
@@ -377,6 +415,8 @@ class VoiceEditingManager {
         normLower.includes("create") ||
         normLower.includes("submit") ||
         normLower.includes("register") ||
+        normLower.includes("save") ||
+        normLower.includes("update") ||
         normLower.includes("account") ||
         normLower.includes("sign in") ||
         normLower.includes("log in") ||
@@ -387,11 +427,14 @@ class VoiceEditingManager {
         const elementId = this.targetField ? this.targetField.elementId : "reg-submit-btn";
         const submitBtn = (elementId && document.getElementById(elementId)) || document.querySelector("form button[type='submit']");
         const isLoginPage = elementId === "login-submit-btn";
+        const isProfilePage = elementId === "prof-save-btn" || (this.targetField && this.targetField.label?.toLowerCase().includes("save"));
         this.reset();
         if (submitBtn) {
           submitBtn.click();
           const prompt = isLoginPage
             ? "Signing you in now."
+            : isProfilePage
+            ? "Saving your profile settings now."
             : "Submitting form to create your account now.";
           return { success: true, prompt, state: EDIT_STATES.SAVED };
         } else {
@@ -400,8 +443,11 @@ class VoiceEditingManager {
         }
       } else {
         const isLoginPage = this.targetField && this.targetField.elementId === "login-submit-btn";
+        const isProfilePage = this.targetField && (this.targetField.elementId === "prof-save-btn" || this.targetField.label?.toLowerCase().includes("save"));
         const prompt = isLoginPage
           ? "Please say yes or sign in to log into your account."
+          : isProfilePage
+          ? "Please say yes or save to save your profile settings."
           : "Please say yes or create account to submit the form.";
         return { success: false, prompt, state: this.state };
       }

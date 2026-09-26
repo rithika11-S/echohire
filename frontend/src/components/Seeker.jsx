@@ -5,7 +5,21 @@ import { formContext } from "../assistant/FormContextService";
 import { voiceEditingManager } from "../assistant/VoiceEditingService";
 import { echoTTS } from "../assistant/textToSpeech";
 import { handleFormArrowKeys } from "../utils/keyboard";
-import { Mic, Upload, Plus, X, FileText, CheckCircle2, Save } from "lucide-react";
+import PageIntroduction from "../accessibility/PageIntroduction";
+import {
+  Mic,
+  Upload,
+  Plus,
+  X,
+  FileText,
+  CheckCircle2,
+  Save,
+  Sparkles,
+  Volume2,
+  AudioLines,
+  HelpCircle,
+  ArrowRight,
+} from "lucide-react";
 
 export default function Seeker() {
   const { currentUser, updateProfile } = useAuth();
@@ -24,7 +38,8 @@ export default function Seeker() {
   );
 
   const [isSavedAlert, setIsSavedAlert] = useState(false);
-  const [activeVoiceField, setActiveVoiceField] = useState(null);
+  const [activeVoiceFieldId, setActiveVoiceFieldId] = useState(null);
+  const [isGuidedActive, setIsGuidedActive] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -38,20 +53,20 @@ export default function Seeker() {
     }
   }, [currentUser]);
 
-  // Register fields with Echo Assistant Form Context
+  // Register form fields for Echo Assistant voice control and editing techniques
   useEffect(() => {
     formContext.registerField({
       id: "name",
-      label: "Name",
+      label: "Full Name",
       elementId: "prof-name",
       getValue: () => fullName,
       setValue: (val) => setFullName(val),
-      aliases: ["my name", "full name", "name field", "user name"],
+      aliases: ["my name", "full name", "name field", "user name", "candidate name"],
     });
 
     formContext.registerField({
       id: "email",
-      label: "Email",
+      label: "Email Address",
       elementId: "prof-email",
       getValue: () => email,
       setValue: () => {},
@@ -83,7 +98,7 @@ export default function Seeker() {
       elementId: "prof-summary",
       getValue: () => summary,
       setValue: (val) => setSummary(val),
-      aliases: ["my summary", "summary field", "bio", "career overview"],
+      aliases: ["my summary", "summary field", "bio", "career overview", "professional summary"],
     });
 
     formContext.registerField({
@@ -127,101 +142,86 @@ export default function Seeker() {
       aliases: ["accommodations", "accommodation preferences", "accessibility needs"],
     });
 
+    formContext.registerField({
+      id: "submit",
+      label: "Save Profile Button",
+      elementId: "prof-save-btn",
+      getValue: () => "Save Profile Settings",
+      setValue: () => {},
+      aliases: ["save profile", "save changes", "save", "save button", "submit", "update profile", "save profile settings"],
+    });
+
     return () => {
       formContext.clearAll();
     };
   }, [fullName, email, phone, location, summary, skills, resumeName, accommodationPrefs]);
 
-  // Focus cleanup on unmount
+  // Automatic orientation and focus on Full Name field on page load (identical to Signup page)
   useEffect(() => {
+    const timer = setTimeout(() => {
+      const firstFieldId = "prof-name";
+      formContext.focusElement(firstFieldId);
+      const editRes = voiceEditingManager.startGuidedEdit("name", null, (data) => {
+        if (data.name) setFullName(data.name);
+        if (data.phone) setPhone(data.phone);
+        if (data.location) setLocation(data.location);
+        if (data.summary) setSummary(data.summary);
+        if (data.accommodation) setAccommodationPrefs(data.accommodation);
+      });
+      if (editRes && editRes.prompt) {
+        echoTTS.speak(editRes.prompt);
+      }
+    }, 400);
+
     return () => {
+      clearTimeout(timer);
       formContext.clearAllFocusStyles();
     };
   }, []);
 
-  // Voice dictation handlers for individual fields
-  const handleVoiceNameDictation = () => {
+  // Voice Dictation Helper for individual field buttons (matches Register.jsx pattern)
+  const dictateField = (setter, label, elementId, append = false) => {
+    if (elementId) {
+      formContext.focusElement(elementId);
+      setActiveVoiceFieldId(elementId);
+    }
+    announce(`Listening for ${label}...`);
+    startVoiceInput(
+      (spokenText) => {
+        if (append) {
+          setter((prev) => (prev ? `${prev} ${spokenText}` : spokenText));
+        } else {
+          setter(spokenText);
+        }
+        announce(`${label} set to ${spokenText}`);
+        setActiveVoiceFieldId(null);
+      },
+      () => setActiveVoiceFieldId(null)
+    );
+  };
+
+  // Start guided step-by-step editing for profile (identical to signup experience)
+  const handleStartGuidedEditing = () => {
+    setIsGuidedActive(true);
     formContext.focusElement("prof-name");
-    setActiveVoiceField("name");
-    announce("Listening for full name...");
-    startVoiceInput(
-      (spokenText) => {
-        setFullName(spokenText);
-        announce(`Full name set to ${spokenText}`);
-        setActiveVoiceField(null);
-      },
-      () => setActiveVoiceField(null)
-    );
+    const editRes = voiceEditingManager.startGuidedEdit("name", null, (data) => {
+      if (data.name) setFullName(data.name);
+      if (data.phone) setPhone(data.phone);
+      if (data.location) setLocation(data.location);
+      if (data.summary) setSummary(data.summary);
+      if (data.accommodation) setAccommodationPrefs(data.accommodation);
+    });
+    if (editRes && editRes.prompt) {
+      echoTTS.speak(editRes.prompt);
+      announce(editRes.prompt);
+    }
   };
 
-  const handleVoicePhoneDictation = () => {
-    formContext.focusElement("prof-phone");
-    setActiveVoiceField("phone");
-    announce("Listening for phone number...");
-    startVoiceInput(
-      (spokenText) => {
-        setPhone(spokenText);
-        announce(`Phone number set to ${spokenText}`);
-        setActiveVoiceField(null);
-      },
-      () => setActiveVoiceField(null)
-    );
-  };
-
-  const handleVoiceLocationDictation = () => {
-    formContext.focusElement("prof-location");
-    setActiveVoiceField("location");
-    announce("Listening for location...");
-    startVoiceInput(
-      (spokenText) => {
-        setLocation(spokenText);
-        announce(`Location set to ${spokenText}`);
-        setActiveVoiceField(null);
-      },
-      () => setActiveVoiceField(null)
-    );
-  };
-
-  const handleVoiceSummaryDictation = () => {
-    formContext.focusElement("prof-summary");
-    setActiveVoiceField("summary");
-    announce("Listening for professional summary dictation...");
-    startVoiceInput(
-      (spokenText) => {
-        setSummary((prev) => (prev ? `${prev} ${spokenText}` : spokenText));
-        announce("Professional summary updated via voice input.");
-        setActiveVoiceField(null);
-      },
-      () => setActiveVoiceField(null)
-    );
-  };
-
-  const handleVoiceAccDictation = () => {
-    formContext.focusElement("prof-acc");
-    setActiveVoiceField("accommodation");
-    announce("Listening for accommodation preferences dictation...");
-    startVoiceInput(
-      (spokenText) => {
-        setAccommodationPrefs((prev) => (prev ? `${prev} ${spokenText}` : spokenText));
-        announce("Accommodation preferences updated via voice input.");
-        setActiveVoiceField(null);
-      },
-      () => setActiveVoiceField(null)
-    );
-  };
-
-  const handleVoiceSkillDictation = () => {
-    formContext.focusElement("add-skill-input");
-    setActiveVoiceField("skill");
-    announce("Listening for skill name...");
-    startVoiceInput(
-      (spokenText) => {
-        setNewSkill(spokenText);
-        announce(`Skill input set to ${spokenText}`);
-        setActiveVoiceField(null);
-      },
-      () => setActiveVoiceField(null)
-    );
+  // Read entire profile aloud
+  const handleReadProfileOverview = () => {
+    const speechText = `Profile overview for ${fullName || "Candidate"}. Phone: ${phone || "not set"}. Location: ${location || "not set"}. Skills: ${skills.join(", ")}. Resume: ${resumeName}. Accommodation preferences: ${accommodationPrefs}. You can say 'start guided editing' or click any mic button to update your details.`;
+    announce(speechText);
+    speak(speechText, true);
   };
 
   const handleAddSkill = () => {
@@ -249,7 +249,7 @@ export default function Seeker() {
   };
 
   const handleSaveProfile = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     await updateProfile({
       name: fullName,
       phone,
@@ -278,18 +278,131 @@ export default function Seeker() {
 
   return (
     <div className="seeker-profile-page" role="region" aria-labelledby="profile-heading">
+      {/* Accessible Page Introduction Header with Keyboard Shortcut Alt + Shift + I */}
+      <PageIntroduction routeKey="profile" />
+
       <div style={{ marginBottom: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
           <span className="badge-type" style={{ padding: "4px 12px", fontSize: "13px" }}>
             Job Seeker View
+          </span>
+          <span
+            className="brand-badge"
+            style={{
+              background: "rgba(37, 99, 235, 0.1)",
+              border: "1px solid rgba(37, 99, 235, 0.3)",
+              color: "var(--accent-blue)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "4px 10px",
+              fontSize: "12px",
+              borderRadius: "20px",
+            }}
+          >
+            <Sparkles size={12} />
+            <span>Voice Editing Active</span>
           </span>
         </div>
         <h1 id="profile-heading" tabIndex={0} style={{ fontSize: "36px", fontWeight: "900", color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
           Job Seeker Profile
         </h1>
         <p style={{ color: "var(--text-secondary)", fontSize: "16px" }}>
-          Manage your career summary, accessible preferences, resume, and skills for equal opportunity employers.
+          Manage your career summary, accessible preferences, resume, and skills with voice assistant and guided editing techniques.
         </p>
+      </div>
+
+      {/* Voice Assistant & Guided Editing Action Card (Similar to Signup Experience) */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(30, 41, 59, 0.04) 100%)",
+          border: "1px solid rgba(37, 99, 235, 0.3)",
+          borderRadius: "var(--radius-lg)",
+          padding: "20px 24px",
+          marginBottom: "24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                background: "var(--accent-blue)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#FFFFFF",
+                boxShadow: "0 0 12px rgba(37, 99, 235, 0.4)",
+              }}
+            >
+              <AudioLines size={22} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: "17px", fontWeight: "800", margin: 0, color: "var(--text-primary)" }}>
+                Echo Voice Assistant & Guided Editing
+              </h3>
+              <p style={{ fontSize: "13px", color: "var(--text-secondary)", margin: 0 }}>
+                Speak naturally to edit any field, or let the assistant guide you through each profile section step-by-step.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button
+              type="button"
+              className="primary-btn"
+              onClick={handleStartGuidedEditing}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "14px", padding: "8px 16px" }}
+              aria-label="Start voice-guided profile editing"
+            >
+              <Sparkles size={15} />
+              <span>Start Guided Voice Editing</span>
+            </button>
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={handleReadProfileOverview}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "13px", padding: "8px 14px" }}
+              aria-label="Read full profile aloud"
+            >
+              <Volume2 size={15} />
+              <span>Read Profile Aloud</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Spoken Voice Commands Cheatsheet */}
+        <div
+          style={{
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-color)",
+            borderRadius: "var(--radius-sm)",
+            padding: "10px 14px",
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "10px",
+            fontSize: "13px",
+            color: "var(--text-secondary)",
+          }}
+        >
+          <span style={{ fontWeight: "700", color: "var(--accent-blue)", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+            <Mic size={14} />
+            <span>Voice Commands:</span>
+          </span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Change my name to [Name]&rdquo;</span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Update phone to [Number]&rdquo;</span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Set location to [City]&rdquo;</span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Add skill [Skill]&rdquo;</span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Dictate my summary&rdquo;</span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Save profile&rdquo;</span>
+          <span className="badge-type" style={{ padding: "2px 8px", fontSize: "12px" }}>&ldquo;Next field&rdquo;</span>
+        </div>
       </div>
 
       {isSavedAlert && (
@@ -326,12 +439,13 @@ export default function Seeker() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   onFocus={() => formContext.clearAllFocusStyles()}
+                  placeholder="e.g. Rahul Sharma"
                   required
                 />
                 <button
                   type="button"
-                  className={`mic-btn ${activeVoiceField === "name" && isListening ? "listening" : ""}`}
-                  onClick={handleVoiceNameDictation}
+                  className={`mic-btn ${activeVoiceFieldId === "prof-name" && isListening ? "listening" : ""}`}
+                  onClick={() => dictateField(setFullName, "Full Name", "prof-name")}
                   aria-label="Dictate full name using voice recognition"
                   title="Dictate Full Name"
                 >
@@ -361,16 +475,17 @@ export default function Seeker() {
                 <input
                   id="prof-phone"
                   name="phone"
-                  type="text"
+                  type="tel"
                   className="text-input"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   onFocus={() => formContext.clearAllFocusStyles()}
+                  placeholder="9876543210"
                 />
                 <button
                   type="button"
-                  className={`mic-btn ${activeVoiceField === "phone" && isListening ? "listening" : ""}`}
-                  onClick={handleVoicePhoneDictation}
+                  className={`mic-btn ${activeVoiceFieldId === "prof-phone" && isListening ? "listening" : ""}`}
+                  onClick={() => dictateField(setPhone, "Phone Number", "prof-phone")}
                   aria-label="Dictate phone number using voice recognition"
                   title="Dictate Phone Number"
                 >
@@ -394,8 +509,8 @@ export default function Seeker() {
                 />
                 <button
                   type="button"
-                  className={`mic-btn ${activeVoiceField === "location" && isListening ? "listening" : ""}`}
-                  onClick={handleVoiceLocationDictation}
+                  className={`mic-btn ${activeVoiceFieldId === "prof-location" && isListening ? "listening" : ""}`}
+                  onClick={() => dictateField(setLocation, "Location", "prof-location")}
                   aria-label="Dictate location using voice recognition"
                   title="Dictate Location"
                 >
@@ -426,8 +541,8 @@ export default function Seeker() {
               />
               <button
                 type="button"
-                className={`mic-btn ${activeVoiceField === "summary" && isListening ? "listening" : ""}`}
-                onClick={handleVoiceSummaryDictation}
+                className={`mic-btn ${activeVoiceFieldId === "prof-summary" && isListening ? "listening" : ""}`}
+                onClick={() => dictateField(setSummary, "Professional Summary", "prof-summary", true)}
                 aria-label="Dictate professional summary using voice speech recognition"
                 title="Dictate Summary"
               >
@@ -456,8 +571,8 @@ export default function Seeker() {
                 />
                 <button
                   type="button"
-                  className={`mic-btn ${activeVoiceField === "skill" && isListening ? "listening" : ""}`}
-                  onClick={handleVoiceSkillDictation}
+                  className={`mic-btn ${activeVoiceFieldId === "add-skill-input" && isListening ? "listening" : ""}`}
+                  onClick={() => dictateField(setNewSkill, "Skill", "add-skill-input")}
                   aria-label="Dictate skill using voice recognition"
                   title="Dictate Skill"
                 >
@@ -529,8 +644,8 @@ export default function Seeker() {
               />
               <button
                 type="button"
-                className={`mic-btn ${activeVoiceField === "accommodation" && isListening ? "listening" : ""}`}
-                onClick={handleVoiceAccDictation}
+                className={`mic-btn ${activeVoiceFieldId === "prof-acc" && isListening ? "listening" : ""}`}
+                onClick={() => dictateField(setAccommodationPrefs, "Accommodation Preferences", "prof-acc", true)}
                 aria-label="Dictate accommodation preferences using voice recognition"
                 title="Dictate Accommodations"
               >
@@ -541,9 +656,14 @@ export default function Seeker() {
           </div>
         </div>
 
-        {/* Save Action */}
+        {/* Save Action Button with id="prof-save-btn" registered with FormContext */}
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <button type="submit" className="primary-btn-large" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+          <button
+            id="prof-save-btn"
+            type="submit"
+            className="primary-btn-large"
+            style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+          >
             <Save size={18} />
             <span>Save Profile Settings</span>
           </button>

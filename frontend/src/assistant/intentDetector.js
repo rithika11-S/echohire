@@ -1040,6 +1040,10 @@ export function detectIntent(rawText) {
   // 19. Form Automation & Guided Commands
   if (
     norm.includes("start guided") ||
+    norm.includes("guided edit") ||
+    norm.includes("guided editing") ||
+    norm.includes("edit my profile") ||
+    norm.includes("edit profile") ||
     norm.includes("help me fill") ||
     norm.includes("help fill") ||
     norm === "start form" ||
@@ -1051,9 +1055,6 @@ export function detectIntent(rawText) {
   }
   if (norm.includes("change my name") || norm.includes("edit my name") || norm.includes("update name")) {
     return { type: INTENTS.PROFILE_EDIT_NAME, fieldQuery: "name", normalizedText: norm };
-  }
-  if (norm.includes("edit my profile") || norm.includes("edit profile")) {
-    return { type: INTENTS.NAVIGATE_PROFILE, target: "profile", normalizedText: norm };
   }
   if (norm === "next field" || norm.includes("next field") || norm.includes("move to next")) {
     return { type: INTENTS.FORM_NEXT_FIELD, normalizedText: norm };
@@ -1082,6 +1083,10 @@ export function detectIntent(rawText) {
     norm === "submit" ||
     norm === "submit application" ||
     norm === "save changes" ||
+    norm === "save profile" ||
+    norm === "save profile settings" ||
+    norm === "save settings" ||
+    norm === "save" ||
     norm === "submit form" ||
     norm === "done" ||
     rawLower === "sign in" ||
@@ -1092,7 +1097,10 @@ export function detectIntent(rawText) {
     rawLower === "create account" ||
     rawLower === "sign up" ||
     rawLower === "signup" ||
-    rawLower === "submit"
+    rawLower === "submit" ||
+    rawLower === "save" ||
+    rawLower === "save profile" ||
+    rawLower === "save changes"
   ) {
     return { type: INTENTS.FORM_SUBMIT, normalizedText: norm };
   }

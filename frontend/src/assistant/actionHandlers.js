@@ -689,14 +689,16 @@ export function handleAssistantAction({
       const specificBtn =
         document.getElementById("login-submit-btn") ||
         document.getElementById("reg-submit-btn") ||
-        document.getElementById("emp-submit-btn");
+        document.getElementById("emp-submit-btn") ||
+        document.getElementById("prof-save-btn");
       const primarySubmitBtn = specificBtn ||
         document.querySelector("form button[type='submit']") ||
         document.querySelector("button.primary-btn-large") ||
         document.querySelector("button.primary-btn");
       if (primarySubmitBtn) {
         primarySubmitBtn.click();
-        const reply = "Submitting form now.";
+        const isProfilePage = primarySubmitBtn.id === "prof-save-btn" || !!document.getElementById("prof-save-btn");
+        const reply = isProfilePage ? "Saving your profile settings now." : "Submitting form now.";
         echoTTS.speak(reply);
         conversationMemory.addExchange(userQuery, reply);
         return { reply };
