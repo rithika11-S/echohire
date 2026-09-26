@@ -310,6 +310,43 @@ export function detectIntent(rawText) {
     return { type: INTENTS.THANK_YOU, normalizedText: norm };
   }
 
+  // 1a7. FORM FIELD NAVIGATION INTENTS ("move to next field", "next field", "go to next field", "previous field")
+  if (
+    norm === "next field" ||
+    norm === "next input" ||
+    norm === "move to next field" ||
+    norm === "go to next field" ||
+    norm === "focus next field" ||
+    norm === "focus next" ||
+    norm === "skip field" ||
+    norm === "skip this field" ||
+    norm.includes("next field") ||
+    norm.includes("next input") ||
+    norm.includes("move to next field") ||
+    norm.includes("go to next field") ||
+    norm.includes("focus next field") ||
+    norm.includes("skip field") ||
+    norm.includes("skip this field")
+  ) {
+    return { type: INTENTS.FORM_NEXT_FIELD, normalizedText: norm };
+  }
+  if (
+    norm === "previous field" ||
+    norm === "prev field" ||
+    norm === "previous input" ||
+    norm === "move to previous field" ||
+    norm === "go to previous field" ||
+    norm === "focus previous field" ||
+    norm === "focus previous" ||
+    norm.includes("previous field") ||
+    norm.includes("prev field") ||
+    norm.includes("previous input") ||
+    norm.includes("move to previous field") ||
+    norm.includes("go to previous field")
+  ) {
+    return { type: INTENTS.FORM_PREV_FIELD, normalizedText: norm };
+  }
+
   // 1b. AFFIRMATIVE & NEGATIVE CONFIRMATIONS
   if (
     rawLower === "yes" ||
@@ -341,19 +378,15 @@ export function detectIntent(rawText) {
     rawLower === "nope" ||
     rawLower === "dont" ||
     rawLower === "don't" ||
-    rawLower === "stop" ||
     rawLower === "nevermind" ||
     rawLower === "cancel" ||
-    rawLower === "next" ||
-    rawLower === "next job" ||
-    rawLower.startsWith("no ") ||
-    rawLower.includes("move to next") ||
-    rawLower.includes("next job") ||
-    rawLower.includes("go to next") ||
-    rawLower.includes("skip this job") ||
-    rawLower.includes("skip job") ||
-    rawLower.includes("skip it") ||
-    rawLower.includes("no move to next")
+    rawLower === "no thank you" ||
+    rawLower === "no thanks" ||
+    rawLower === "skip this job" ||
+    rawLower === "skip job" ||
+    rawLower === "no move to next" ||
+    rawLower === "no next job" ||
+    (rawLower.startsWith("no ") && !rawLower.includes("problem") && !rawLower.includes("field"))
   ) {
     return { type: INTENTS.NEGATIVE_CANCEL, normalizedText: norm };
   }

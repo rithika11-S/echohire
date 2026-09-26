@@ -665,7 +665,9 @@ export function handleAssistantAction({
 
       // 3. Update voiceEditingManager state and speak prompt
       const editRes = voiceEditingManager.startGuidedEdit(nextField.id, null, updateProfileState);
-      const reply = `Moved to ${nextField.label}. ${editRes.prompt}`;
+      const reply = editRes?.prompt?.toLowerCase().includes(nextField.label.toLowerCase())
+        ? editRes.prompt
+        : `Moved to ${nextField.label}. ${editRes?.prompt || "Please enter the value."}`;
       echoTTS.speak(reply);
       conversationMemory.addExchange(userQuery, reply);
       return { reply };
@@ -729,7 +731,9 @@ export function handleAssistantAction({
       }
 
       const editRes = voiceEditingManager.startGuidedEdit(prevField.id, null, updateProfileState);
-      const reply = `Moved back to ${prevField.label}. ${editRes.prompt}`;
+      const reply = editRes?.prompt?.toLowerCase().includes(prevField.label.toLowerCase())
+        ? editRes.prompt
+        : `Moved back to ${prevField.label}. ${editRes?.prompt || "Please enter the value."}`;
       echoTTS.speak(reply);
       conversationMemory.addExchange(userQuery, reply);
       return { reply };
