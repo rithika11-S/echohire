@@ -105,6 +105,14 @@ class FormContextRegistry {
     // Never highlight disabled elements (like static email)
     if (!el || el.disabled) return false;
 
+    // Handle hidden inputs (such as file inputs styled with display: none)
+    if (el && (el.style.display === "none" || el.offsetParent === null)) {
+      const visibleTarget = document.querySelector(`label[for="${elementId}"]`) || el.parentElement?.querySelector("label, button");
+      if (visibleTarget) {
+        el = visibleTarget;
+      }
+    }
+
     try {
       if (document.activeElement && document.activeElement !== el && typeof document.activeElement.blur === "function") {
         document.activeElement.blur();
@@ -116,6 +124,9 @@ class FormContextRegistry {
       }
 
       el.classList.add("voice-field-focused");
+      el.style.outline = "2px solid var(--accent-blue, #2563EB)";
+      el.style.borderColor = "var(--accent-blue, #2563EB)";
+      el.style.boxShadow = "0 0 0 3px rgba(37, 99, 235, 0.25)";
       this.currentFocusedElement = el;
 
       // Remove highlight immediately when focus leaves this element

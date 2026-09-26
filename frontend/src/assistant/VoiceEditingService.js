@@ -560,6 +560,13 @@ class VoiceEditingManager {
 
     if (nextField) {
       console.log("[VoiceEditing] Automatically advancing to next field:", nextField.id);
+      formContext.clearAllFocusStyles();
+      if (typeof document !== "undefined" && document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
+      }
+      if (nextField.elementId) {
+        formContext.focusElement(nextField.elementId);
+      }
       const nextRes = this.startGuidedEdit(nextField.id, null, this.updateProfileCallback);
       const labelSpoken = label.replace(/\s*(checkbox|button)\s*/gi, "").trim();
       const valSpoken = typeof savedVal === "boolean" ? (savedVal ? "agreed" : "not agreed") : `saved as "${savedVal}"`;

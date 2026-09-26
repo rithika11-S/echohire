@@ -592,11 +592,7 @@ export function detectIntent(rawText) {
     rawLower.includes("same process") ||
     norm === "next job" ||
     norm === "next position" ||
-    norm === "next recommendation" ||
-    norm === "next" ||
-    norm === "skip" ||
-    rawLower === "next" ||
-    rawLower === "skip"
+    norm === "next recommendation"
   ) {
     return { type: INTENTS.NEXT_FILTERED_JOB, normalizedText: norm };
   }
@@ -1056,10 +1052,45 @@ export function detectIntent(rawText) {
   if (norm.includes("change my name") || norm.includes("edit my name") || norm.includes("update name")) {
     return { type: INTENTS.PROFILE_EDIT_NAME, fieldQuery: "name", normalizedText: norm };
   }
-  if (norm === "next field" || norm.includes("next field") || norm.includes("move to next")) {
+  if (
+    norm === "next field" ||
+    norm === "next" ||
+    norm === "move to next" ||
+    norm === "move to next field" ||
+    norm === "go to next" ||
+    norm === "go to next field" ||
+    norm === "focus next" ||
+    norm === "focus next field" ||
+    norm === "next input" ||
+    norm === "skip" ||
+    norm === "skip field" ||
+    norm === "skip this field" ||
+    norm.includes("next field") ||
+    norm.includes("move to next") ||
+    norm.includes("go to next field") ||
+    norm.includes("focus next") ||
+    norm.includes("skip field") ||
+    norm.includes("skip this field")
+  ) {
     return { type: INTENTS.FORM_NEXT_FIELD, normalizedText: norm };
   }
-  if (norm === "previous field" || norm.includes("previous field") || norm === "prev field") {
+  if (
+    norm === "previous field" ||
+    norm === "previous" ||
+    norm === "prev field" ||
+    norm === "prev" ||
+    norm === "back field" ||
+    norm === "move to previous" ||
+    norm === "move to previous field" ||
+    norm === "go to previous" ||
+    norm === "go to previous field" ||
+    norm === "focus previous" ||
+    norm === "focus previous field" ||
+    norm.includes("previous field") ||
+    norm.includes("prev field") ||
+    norm.includes("move to previous") ||
+    norm.includes("go to previous field")
+  ) {
     return { type: INTENTS.FORM_PREV_FIELD, normalizedText: norm };
   }
   if (norm.includes("skip field") || norm.includes("skip this field") || norm === "skip") {

@@ -120,7 +120,7 @@ export default function Seeker() {
     formContext.registerField({
       id: "resume",
       label: "Resume File",
-      elementId: "resume-upload",
+      elementId: "resume-upload-label",
       getValue: () => resumeName || "",
       setValue: (val) => {
         if (val && val.trim()) {
@@ -425,7 +425,7 @@ export default function Seeker() {
 
       <form onSubmit={handleSaveProfile} onKeyDown={handleFormArrowKeys} className="profile-form-grid">
         {/* Section 1: Personal & Contact Information */}
-        <div className="form-card" tabIndex={0}>
+        <div className="form-card">
           <h2>Personal & Contact Information</h2>
           <div className="form-row-2">
             <div className="form-group">
@@ -438,7 +438,7 @@ export default function Seeker() {
                   className="text-input"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  onFocus={() => formContext.clearAllFocusStyles()}
+                  onFocus={() => { voiceEditingManager.activeFieldId = "name"; }}
                   placeholder="e.g. Rahul Sharma"
                   required
                 />
@@ -479,7 +479,7 @@ export default function Seeker() {
                   className="text-input"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  onFocus={() => formContext.clearAllFocusStyles()}
+                  onFocus={() => { voiceEditingManager.activeFieldId = "phone"; }}
                   placeholder="9876543210"
                 />
                 <button
@@ -504,7 +504,7 @@ export default function Seeker() {
                   className="text-input"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  onFocus={() => formContext.clearAllFocusStyles()}
+                  onFocus={() => { voiceEditingManager.activeFieldId = "location"; }}
                   placeholder="e.g. Chennai, India"
                 />
                 <button
@@ -522,7 +522,7 @@ export default function Seeker() {
         </div>
 
         {/* Section 2: Professional Summary (Voice Dictation Supported) */}
-        <div className="form-card" tabIndex={0}>
+        <div className="form-card">
           <h2>Professional Summary</h2>
           <div className="form-group">
             <label htmlFor="prof-summary" className="filter-label">
@@ -536,7 +536,7 @@ export default function Seeker() {
                 className="text-input"
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
-                onFocus={() => formContext.clearAllFocusStyles()}
+                onFocus={() => { voiceEditingManager.activeFieldId = "summary"; }}
                 placeholder="Describe your career goals, key achievements, and accessibility strengths..."
               />
               <button
@@ -554,7 +554,7 @@ export default function Seeker() {
         </div>
 
         {/* Section 3: Skills & Expertise */}
-        <div className="form-card" tabIndex={0}>
+        <div className="form-card">
           <h2>Skills & Expertise</h2>
           <div className="form-group">
             <label htmlFor="add-skill-input" className="filter-label">Add Key Competency (Voice Input Supported)</label>
@@ -567,7 +567,7 @@ export default function Seeker() {
                   placeholder="e.g. React, Python, ARIA Semantics"
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
-                  onFocus={() => formContext.clearAllFocusStyles()}
+                  onFocus={() => { voiceEditingManager.activeFieldId = "skill"; }}
                 />
                 <button
                   type="button"
@@ -604,7 +604,7 @@ export default function Seeker() {
         </div>
 
         {/* Section 4: Resume & Document Upload */}
-        <div className="form-card" tabIndex={0}>
+        <div className="form-card">
           <h2>Resume & Accessibility Accommodations</h2>
           <div className="form-group">
             <label htmlFor="resume-upload" className="filter-label">Attached Resume File</label>
@@ -621,7 +621,20 @@ export default function Seeker() {
                   onChange={handleFileUpload}
                   style={{ display: "none" }}
                 />
-                <label htmlFor="resume-upload" className="secondary-btn" style={{ display: "inline-flex", cursor: "pointer" }}>
+                <label
+                  id="resume-upload-label"
+                  htmlFor="resume-upload"
+                  className="secondary-btn"
+                  style={{ display: "inline-flex", cursor: "pointer" }}
+                  tabIndex={0}
+                  onFocus={() => { voiceEditingManager.activeFieldId = "resume"; }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      document.getElementById("resume-upload")?.click();
+                    }
+                  }}
+                >
                   <Upload size={15} />
                   <span>Upload New Resume File</span>
                 </label>
@@ -639,7 +652,7 @@ export default function Seeker() {
                 className="text-input"
                 value={accommodationPrefs}
                 onChange={(e) => setAccommodationPrefs(e.target.value)}
-                onFocus={() => formContext.clearAllFocusStyles()}
+                onFocus={() => { voiceEditingManager.activeFieldId = "accommodation"; }}
                 placeholder="e.g. Screen reader software required, flexible remote schedule..."
               />
               <button
@@ -663,6 +676,7 @@ export default function Seeker() {
             type="submit"
             className="primary-btn-large"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+            onFocus={() => { voiceEditingManager.activeFieldId = "submit"; }}
           >
             <Save size={18} />
             <span>Save Profile Settings</span>

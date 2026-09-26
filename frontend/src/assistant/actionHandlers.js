@@ -626,29 +626,108 @@ export function handleAssistantAction({
   // 1d. FORM_NEXT_FIELD Intent ("Next field", "Next", "Skip")
   if (type === INTENTS.FORM_NEXT_FIELD || type === INTENTS.FORM_SKIP_FIELD) {
     logAction("FORM_NEXT_FIELD");
-    const fields = formContext.getRegisteredFields();
+    const allFields = formContext.getRegisteredFields();
+
+    // Filter to ONLY enabled fields that exist in DOM and are not disabled
+    const fields = allFields.filter((f) => {
+      if (f.disabled) return false;
+      const domEl = f.elementId ? document.getElementById(f.elementId) : null;
+      if (domEl && domEl.disabled) return false;
+      return true;
+    });
+
     if (fields.length > 0) {
-      const activeIdx = fields.findIndex((f) => f.id === voiceEditingManager.activeFieldId);
-      const nextIdx = activeIdx >= 0 && activeIdx < fields.length - 1 ? activeIdx + 1 : 0;
+      // Find current active index: check voiceEditingManager first, or document.activeElement
+      let activeIdx = fields.findIndex((f) => f.id === voiceEditingManager.activeFieldId);
+      if (activeIdx === -1 && typeof document !== "undefined" && document.activeElement) {
+        const activeEl = document.activeElement;
+        activeIdx = fields.findIndex((f) => {
+          const el = f.elementId ? document.getElementById(f.elementId) : null;
+          return el === activeEl || (el && el.contains(activeEl));
+        });
+      }
+
+      const nextIdx = (activeIdx >= 0 && activeIdx < fields.length - 1) ? activeIdx + 1 : 0;
       const nextField = fields[nextIdx];
-      nextField.focus();
+
+      // 1. Clear highlight and blur previous active element immediately
+      formContext.clearAllFocusStyles();
+      if (typeof document !== "undefined" && document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
+      }
+
+      // 2. Focus the new target field in the DOM
+      if (nextField.elementId) {
+        formContext.focusElement(nextField.elementId);
+      } else if (nextField.focus) {
+        nextField.focus();
+      }
+
+      // 3. Update voiceEditingManager state and speak prompt
       const editRes = voiceEditingManager.startGuidedEdit(nextField.id, null, updateProfileState);
       const reply = `Moved to ${nextField.label}. ${editRes.prompt}`;
       echoTTS.speak(reply);
       conversationMemory.addExchange(userQuery, reply);
       return { reply };
+    } else if (conversationMemory.isNavigatingSequence) {
+      // Fallback for job sequence if on jobs page without active form
+      const nextIndex = conversationMemory.filteredSequenceIndex + 1;
+      const sequence = conversationMemory.filteredSequence;
+      if (nextIndex < sequence.length) {
+        conversationMemory.filteredSequenceIndex = nextIndex;
+        const nextJob = sequence[nextIndex];
+        conversationMemory.setReferencedJob(nextJob, nextIndex);
+        conversationMemory.setProposedAction("OPEN_JOB_DETAILS", {
+          job: nextJob,
+          list: sequence,
+          index: nextIndex,
+          sequenceType: conversationMemory.sequenceType,
+        });
+        const reply = conversationMemory.formatJobExplanation(nextJob, nextIndex, sequence.length, "advance");
+        echoTTS.speak(reply);
+        conversationMemory.addExchange(userQuery, reply);
+        return { reply };
+      }
     }
   }
 
   // 1e. FORM_PREV_FIELD Intent ("Previous field", "Previous")
   if (type === INTENTS.FORM_PREV_FIELD) {
     logAction("FORM_PREV_FIELD");
-    const fields = formContext.getRegisteredFields();
+    const allFields = formContext.getRegisteredFields();
+
+    // Filter to ONLY enabled fields that exist in DOM and are not disabled
+    const fields = allFields.filter((f) => {
+      if (f.disabled) return false;
+      const domEl = f.elementId ? document.getElementById(f.elementId) : null;
+      if (domEl && domEl.disabled) return false;
+      return true;
+    });
+
     if (fields.length > 0) {
-      const activeIdx = fields.findIndex((f) => f.id === voiceEditingManager.activeFieldId);
+      let activeIdx = fields.findIndex((f) => f.id === voiceEditingManager.activeFieldId);
+      if (activeIdx === -1 && typeof document !== "undefined" && document.activeElement) {
+        const activeEl = document.activeElement;
+        activeIdx = fields.findIndex((f) => {
+          const el = f.elementId ? document.getElementById(f.elementId) : null;
+          return el === activeEl || (el && el.contains(activeEl));
+        });
+      }
+
       const prevIdx = activeIdx > 0 ? activeIdx - 1 : fields.length - 1;
       const prevField = fields[prevIdx];
-      prevField.focus();
+
+      formContext.clearAllFocusStyles();
+      if (typeof document !== "undefined" && document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
+      }
+
+      if (prevField.elementId) {
+        formContext.focusElement(prevField.elementId);
+      } else if (prevField.focus) {
+        prevField.focus();
+      }
+
       const editRes = voiceEditingManager.startGuidedEdit(prevField.id, null, updateProfileState);
       const reply = `Moved back to ${prevField.label}. ${editRes.prompt}`;
       echoTTS.speak(reply);
